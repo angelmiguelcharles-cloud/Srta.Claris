@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carta - Rellenísimas Empanadas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <img src="logo.jpg" alt="Logo de Rellenísimas Empanadas" class="logo">
+    <p>No estás de mal humor, es que necesitas una Rellenísima</p>
+    <p class="lema">De Dios, Orbe y Familia</p>
+  </header>
+
+  <main>
+    <section>
+      <fieldset>
+        <legend>¿Cómo quieres pedir?</legend>
+        <label>
+          <input type="radio" name="pedido" value="domicilio" checked> A domicilio
+        </label>
+        <label>
+          <input type="radio" name="pedido" value="llevar"> Para llevar
+        </label>
+      </fieldset>
+    </section>
+
+    <section>
+      <h2>Haz tu pedido</h2>
+      <div id="lista"></div>
+      <button type="button" class="boton" id="confirmar">Confirmar pedido</button>
+    </section>
+  </main>
+
+  <script>
+    const articulos = ["Carne", "queso", "Pollo", "Jamón y queso", "Vegetales"];
+    const lista = document.getElementById("lista");
+    const cantidades = {};
+
+    articulos.forEach((nombre) => {
+      cantidades[nombre] = 0;
+
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <div class="inner">
+          <span class="name"></span>
+          <button type="button" class="btn-cantidad" aria-label="Restar">&minus;</button>
+          <span class="count" aria-live="polite">0</span>
+          <button type="button" class="btn-cantidad" aria-label="Sumar">+</button>
+        </div>`;
+
+      el.querySelector(".name").textContent = nombre;
+      const contador = el.querySelector(".count");
+      const [restar, sumar] = el.querySelectorAll("button");
+
+      sumar.addEventListener("click", () => {
+        cantidades[nombre]++;
+        contador.textContent = cantidades[nombre];
+      });
+
+      restar.addEventListener("click", () => {
+        if (cantidades[nombre] > 0) {
+          cantidades[nombre]--;
+          contador.textContent = cantidades[nombre];
+        }
+      });
+
+      lista.appendChild(el);
+    });
+
+    document.getElementById("confirmar").addEventListener("click", () => {
+      const tipo = document.querySelector('input[name="pedido"]:checked').value;
+      const resumen = Object.entries(cantidades)
+        .filter(([, n]) => n > 0)
+        .map(([nombre, n]) => `${n} x ${nombre}`);
+
+      if (resumen.length === 0) {
+        alert("Agrega al menos una empanada a tu pedido.");
+        return;
+      }
+      alert(`Pedido (${tipo}):\n${resumen.join("\n")}`);
+    });
+  </script>
+
+</body>
+</html>
